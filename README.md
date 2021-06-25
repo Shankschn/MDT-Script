@@ -1,5 +1,6 @@
-# MDT-Script
+# MDT-Scripts
 Microsoft Deployment Toolkit Scripts
+微软 MDT 个人脚本
 
 # UserExit - SSD M2.vbs
 检测并选择 SSD，优先选择 M2 SSD。
