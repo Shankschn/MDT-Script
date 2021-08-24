@@ -6,7 +6,7 @@ End Function
 Function SetOSDisk()
     Set ObjShell = CreateObject("WScript.Shell")
     deployroot = oEnvironment.Item("deployroot")
-    cmd1 = "powershell.exe -noprofile -executionpolicy bypass -file" & deployroot & "\scripts\clear_disk_gpt.ps1"
+    cmd1 = "powershell.exe -noprofile -executionpolicy bypass -file " & deployroot & "\scripts\clear_disk_gpt.ps1"
     oLogging.CreateEntry "UserExit: Command to run " & cmd1, LogTypeInfo
     ObjShell.run cmd1,0,true
 
