@@ -3,12 +3,15 @@ Microsoft Deployment Toolkit Scripts
 微软 MDT 个人脚本
 使用时，请更改脚本名称。
 
-## UserExit - AutoSelectAndClearFormatDisk SSD M2 SAS SATA.vbs
+## UserExit - Auto SSD M2 SAS SATA.vbs
+重要：该脚本会清理所有硬盘数据！
 优先选择容量最小，速度最快的盘，设置为 OSDisk，即系统盘。
 硬盘优先级：M2 SSD > SAS SSD > SATA SSD > SATA HDD
-格式化所有硬盘(需搭配 clear_disk_gpt.ps1)。
+### 该命令通常还需配合 FormatOtherDisks.ps1
+FormatOtherDisks.ps1 将所有磁盘均格式化。
 
 ## UserExit - AutoSelectDisk SSD M2 SAS SATA.vbs
+只进行标记操作系统安装 Disk，不会进行格式化操作。
 优先选择容量最小，速度最快的盘，设置为 OSDisk，即系统盘。
 硬盘优先级：M2 SSD > SAS SSD > SATA SSD > SATA HDD
 支持虚拟机 VMWare Workstation 17，ESXi 6.7 U3 磁盘测试。
