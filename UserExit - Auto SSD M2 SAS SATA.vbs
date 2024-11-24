@@ -8,7 +8,7 @@ Function SetOSDisk()
     Set objFSO = CreateObject("Scripting.FileSystemObject")
     tmpName = GenRandomName()
     scriptTmpFolder = "X:\Deploy\tmp"
-    strScriptFile = scriptTmpFolder & "\CleanAllDisks-" & tmpName & ".txt"
+    strScriptFile = scriptTmpFolder & "\CleanAllDisks.txt"
     If Not objFSO.FolderExists(scriptTmpFolder) Then
         objFSO.CreateFolder(scriptTmpFolder)
     End If
@@ -66,15 +66,4 @@ Function SetOSDisk()
         diskid=0
     end if
     SetOSDisk=diskid
-End Function
-
-Function GenRandomName()
-    Dim chars, GRName, i, randomIndex
-    chars = "ABCDEFGHJKLQWERTZXCVB123456789"
-    GRName = ""
-    For i = 1 To 8
-        randomIndex = Int((Len(chars) * Rnd) + 1)
-        GRName = GRName & Mid(chars, randomIndex, 1)
-    Next
-    GenRandomName = GRName
 End Function
