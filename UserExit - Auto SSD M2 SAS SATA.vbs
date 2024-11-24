@@ -22,7 +22,6 @@ Function SetOSDisk()
     objFile.WriteLine("exit")
     objFile.Close
     objShell.Run "diskpart /s " & strScriptFile, 1, True
-    objFSO.DeleteFile(strScriptFile)
 
     set wmi=GetObject("Winmgmts:\\.\Root\Microsoft\Windows\Storage")
     set disks=wmi.Execquery("Select * from MSFT_PhysicalDisk")
