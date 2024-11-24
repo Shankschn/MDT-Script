@@ -4,7 +4,26 @@ Function UserExit(sType, sWhen, sDetail, bSkip)
 End Function
 
 Function SetOSDisk()
-    Set ObjShell=CreateObject("WScript.Shell")
+    Set objShell = CreateObject("WScript.Shell")
+    Set objFSO = CreateObject("Scripting.FileSystemObject")
+    tmpName = GenRandomName()
+    scriptTmpFolder = "X:\Deploy\tmp"
+    strScriptFile = scriptTmpFolder & "\CleanAllDisks-" & tmpName & ".txt"
+    If Not objFSO.FolderExists(scriptTmpFolder) Then
+        objFSO.CreateFolder(scriptTmpFolder)
+    End If
+    Set objFile = objFSO.CreateTextFile(strScriptFile, True)
+    Set objWMIService = GetObject("winmgmts:\\.\root\cimv2")
+    Set colDisks = objWMIService.ExecQuery("Select * from Win32_DiskDrive")
+    For Each objDisk In colDisks
+        objFile.WriteLine("select disk " & objDisk.Index)
+        objFile.WriteLine("clean")
+    Next
+    objFile.WriteLine("exit")
+    objFile.Close
+    objShell.Run "diskpart /s " & strScriptFile, 1, True
+    objFSO.DeleteFile(strScriptFile)
+
     set wmi=GetObject("Winmgmts:\\.\Root\Microsoft\Windows\Storage")
     set disks=wmi.Execquery("Select * from MSFT_PhysicalDisk")
     diskp1=0
@@ -48,9 +67,15 @@ Function SetOSDisk()
         diskid=0
     end if
     SetOSDisk=diskid
-    
-    deployroot=oEnvironment.Item("deployroot")
-    cmd1="powershell.exe -noprofile -executionpolicy bypass -file " & deployroot & "\scripts\clear_disk_gpt.ps1 " & diskid & " " & diskp1 & " " & diskp2 & " " & diskp3
-    oLogging.CreateEntry "UserExit: Command to run " & cmd1, LogTypeInfo
-    ObjShell.run cmd1,0,true
+End Function
+
+Function GenRandomName()
+    Dim chars, GRName, i, randomIndex
+    chars = "ABCDEFGHJKLQWERTZXCVB123456789"
+    GRName = ""
+    For i = 1 To 8
+        randomIndex = Int((Len(chars) * Rnd) + 1)
+        GRName = GRName & Mid(chars, randomIndex, 1)
+    Next
+    GenRandomName = GRName
 End Function
