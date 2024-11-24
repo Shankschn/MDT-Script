@@ -6,7 +6,6 @@ End Function
 Function SetOSDisk()
     Set objShell = CreateObject("WScript.Shell")
     Set objFSO = CreateObject("Scripting.FileSystemObject")
-    tmpName = GenRandomName()
     scriptTmpFolder = "X:\Deploy\tmp"
     strScriptFile = scriptTmpFolder & "\CleanAllDisks.txt"
     If Not objFSO.FolderExists(scriptTmpFolder) Then
