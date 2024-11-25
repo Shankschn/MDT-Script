@@ -4,23 +4,52 @@ Function UserExit(sType, sWhen, sDetail, bSkip)
 End Function
 
 Function SetOSDisk()
+    Dim objShell, objFSO, objFile, scriptTmpFolder, strScriptFile, wmi
+    Dim colDisks, objDisk, disks, disk, diskp1, diskp2, diskp3, d, e, f
+    Dim diskid, objFile2
+
     Set objShell = CreateObject("WScript.Shell")
     Set objFSO = CreateObject("Scripting.FileSystemObject")
     scriptTmpFolder = "X:\Deploy\tmp"
-    strScriptFile = scriptTmpFolder & "\CleanAllDisks.txt"
     If Not objFSO.FolderExists(scriptTmpFolder) Then
         objFSO.CreateFolder(scriptTmpFolder)
     End If
+
+    strScriptFile = scriptTmpFolder & "\CleanAllDisks.txt"
     Set objFile = objFSO.CreateTextFile(strScriptFile, True)
-    Set objWMIService = GetObject("winmgmts:\\.\root\cimv2")
-    Set colDisks = objWMIService.ExecQuery("Select * from Win32_DiskDrive")
+    Set wmi = GetObject("winmgmts:\\.\root\cimv2")
+    Set colDisks = wmi.ExecQuery("Select * from Win32_DiskDrive")
     For Each objDisk In colDisks
+        objFile.WriteLine("list disk")
         objFile.WriteLine("select disk " & objDisk.Index)
         objFile.WriteLine("clean")
     Next
-    objFile.WriteLine("exit")
+    'objFile.WriteLine("exit")
     objFile.Close
+
+    checkErr = scriptTmpFolder & "\CheckErr.vbs"
+    Set objFile2 = objFSO.CreateTextFile(checkErr, True)
+    objFile2.WriteLine("Dim objShell, wmi, pl, p, pn, pnHas")
+    objFile2.WriteLine("pn = ""TsProgressUI.exe""")
+    objFile2.WriteLine("pnHas = False")
+    objFile2.WriteLine("Set wmi = GetObject(""winmgmts:\\.\root\cimv2"")")
+    objFile2.WriteLine("For i = 1 To 30")
+    objFile2.WriteLine("    Set pl = wmi.ExecQuery(""SELECT * FROM Win32_Process WHERE Name = '"" & pn & ""'"")")
+    objFile2.WriteLine("    WScript.Echo ""Count: ""& pl.Count")
+    objFile2.WriteLine("    If pl.Count > 0 Then")
+    objFile2.WriteLine("        pnHas = True")
+    objFile2.WriteLine("        Exit For")
+    objFile2.WriteLine("    End If")
+    objFile2.WriteLine("    WScript.Sleep 1000")
+    objFile2.WriteLine("Next")
+    objFile2.WriteLine("If Not pnHas Then")
+    objFile2.WriteLine("    Set objShell = CreateObject(""WScript.Shell"")")
+    objFile2.WriteLine("    objShell.Run ""wpeutil reboot"", 0, False")
+    objFile2.WriteLine("End If")
+    objFile2.Close
+    objShell.Run "wscript.exe """ & checkErr & """", 0, False
     objShell.Run "diskpart /s " & strScriptFile, 1, True
+    WScript.Sleep 3000
 
     set wmi=GetObject("Winmgmts:\\.\Root\Microsoft\Windows\Storage")
     set disks=wmi.Execquery("Select * from MSFT_PhysicalDisk")
